@@ -80,7 +80,7 @@ createApp({
                 formData.append('image', selectedFile.value);
                 formData.append('bg_color', selectedColor.value);
                 
-                processingText.value = 'AI удаляет фон...';
+                processingText.value = 'Обрабатываем...';
                 
                 const response = await fetch('api/process.php', {
                     method: 'POST',
