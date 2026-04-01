@@ -1,15 +1,18 @@
 <?php
 /**
  * Artist Card Generator API
- * Простая версия: ресайз + кроп под размеры VK Music
+ * Ресайз + кроп под размеры карточек и обложек
  */
 
 header('Content-Type: application/json');
 
-// Размеры VK Music
-$FORMATS = [
+$CARD_FORMATS = [
     'web' => ['width' => 1820, 'height' => 458],
     'mobile' => ['width' => 1500, 'height' => 1120]
+];
+
+$COVER_FORMATS = [
+    'cover' => ['width' => 1500, 'height' => 1500]
 ];
 
 // Валидация
@@ -26,6 +29,7 @@ if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
 
 $file = $_FILES['image'];
 $bgColor = $_POST['bg_color'] ?? '#808080';
+$mode = $_POST['mode'] ?? 'cards';
 
 // Проверка типа файла
 $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -69,24 +73,27 @@ if (!is_dir($outputDir)) {
     mkdir($outputDir, 0755, true);
 }
 
+// Выбираем форматы по режиму
+$formats = ($mode === 'covers') ? $COVER_FORMATS : $CARD_FORMATS;
+
 $results = [];
 
-foreach ($FORMATS as $type => $size) {
+foreach ($formats as $type => $size) {
     $dstWidth = $size['width'];
     $dstHeight = $size['height'];
-    
+
     // Создаём холст
     $dstImage = imagecreatetruecolor($dstWidth, $dstHeight);
-    
+
     // Заливаем фоновым цветом
     $rgb = hexToRgb($bgColor);
     $bgColorRes = imagecolorallocate($dstImage, $rgb['r'], $rgb['g'], $rgb['b']);
     imagefill($dstImage, 0, 0, $bgColorRes);
-    
+
     // Рассчитываем масштаб для cover (заполнить всё пространство)
     $srcRatio = $srcWidth / $srcHeight;
     $dstRatio = $dstWidth / $dstHeight;
-    
+
     if ($srcRatio > $dstRatio) {
         // Исходное шире — обрезаем по бокам
         $cropHeight = $srcHeight;
@@ -100,7 +107,7 @@ foreach ($FORMATS as $type => $size) {
         $cropX = 0;
         $cropY = (int)(($srcHeight - $cropHeight) / 2);
     }
-    
+
     // Копируем с кропом и масштабированием
     imagecopyresampled(
         $dstImage, $srcImage,
@@ -109,13 +116,13 @@ foreach ($FORMATS as $type => $size) {
         $dstWidth, $dstHeight,          // dst size
         $cropWidth, $cropHeight         // src crop size
     );
-    
+
     // Сохраняем
-    $filename = "vk-{$type}-{$uid}.png";
+    $filename = "{$type}-{$uid}.png";
     $filepath = $outputDir . $filename;
     imagepng($dstImage, $filepath, 9);
     imagedestroy($dstImage);
-    
+
     $results[$type . '_url'] = 'output/' . $filename;
 }
 
@@ -124,11 +131,12 @@ imagedestroy($srcImage);
 // Очистка старых файлов (старше 1 часа)
 cleanOldFiles($outputDir, 3600);
 
-echo json_encode([
-    'success' => true,
-    'web_url' => $results['web_url'],
-    'mobile_url' => $results['mobile_url']
-]);
+$response = ['success' => true];
+foreach ($results as $key => $url) {
+    $response[$key] = $url;
+}
+
+echo json_encode($response);
 
 // === Helper functions ===
 
