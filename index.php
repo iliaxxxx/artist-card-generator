@@ -76,8 +76,10 @@
                                 style="display: none"
                             >
                             <div class="upload-icon">📷</div>
-                            <p class="upload-text">{{ t.uploadText }}</p>
-                            <p class="upload-hint">{{ t.uploadHint }}</p>
+                            <div class="upload-content">
+                                <p class="upload-text">{{ t.uploadText }}</p>
+                                <p class="upload-hint">{{ t.uploadHint }}</p>
+                            </div>
                         </div>
                     </div>
 
