@@ -40,6 +40,16 @@
                         <p class="subtitle">{{ currentSubtitle }}</p>
                     </div>
 
+                    <!-- Warning -->
+                    <div class="warning-card">
+                        <p class="warning-text">{{ currentWarning }}</p>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="info-card">
+                        <p class="info-text" v-html="currentInfo"></p>
+                    </div>
+
                     <!-- Mode Tabs -->
                     <div class="mode-tabs">
                         <button 
@@ -148,16 +158,6 @@
                             <span v-else>📥 {{ mode === 'cards' ? t.downloadAll : t.downloadCover }}</span>
                         </button>
 
-                    </div>
-
-                    <!-- Warning -->
-                    <div class="warning-card">
-                        <p class="warning-text">{{ currentWarning }}</p>
-                    </div>
-
-                    <!-- Info -->
-                    <div class="info-card">
-                        <p class="info-text" v-html="currentInfo"></p>
                     </div>
 
                     <!-- Error -->
