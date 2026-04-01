@@ -3,10 +3,16 @@ const { createApp, ref, watch, computed, onMounted, nextTick } = Vue;
 // Translations
 const translations = {
     ru: {
-        title: 'БЫСТРОЕ СОЗДАНИЕ ФОТО В НУЖНЫХ РАЗМЕРАХ ДЛЯ ОФОРМЛЕНИЯ КАРТОЧЕК АРТИСТА НА ВСЕХ ПЛОЩАДКАХ',
-        subtitle: 'загрузи своё фото – настрой – скачай готовые размеры для оформления',
-        warning: 'ВНИМАНИЕ: Арты и коллажи не допускаются – только настоящие фотографии группы или артиста. На фото не должно быть курения, алкоголя, каких-либо надписей и изображений брендов (в том числе на одежде).',
-        info: 'Для оформления карточки в Apple Music, Spotify и Звук необходимо зарегистрироваться в их приложениях: <a href="https://artists.apple.com" target="_blank">artists.apple.com</a>, <a href="https://artists.spotify.com" target="_blank">artists.spotify.com</a> и <a href="https://studio.zvuk.com" target="_blank">studio.zvuk.com</a> соответственно.',
+        // Cards mode
+        titleCards: 'БЫСТРОЕ СОЗДАНИЕ ФОТО В НУЖНЫХ РАЗМЕРАХ ДЛЯ ОФОРМЛЕНИЯ КАРТОЧЕК АРТИСТА НА ВСЕХ ПЛОЩАДКАХ',
+        subtitleCards: 'загрузи своё фото – настрой – скачай готовые размеры для оформления',
+        warningCards: 'ВНИМАНИЕ: Арты и коллажи не допускаются – только настоящие фотографии группы или артиста. На фото не должно быть курения, алкоголя, каких-либо надписей и изображений брендов (в том числе на одежде).',
+        infoCards: 'Для оформления карточки в Apple Music, Spotify и Звук необходимо зарегистрироваться в их приложениях: <a href="https://artists.apple.com" target="_blank">artists.apple.com</a>, <a href="https://artists.spotify.com" target="_blank">artists.spotify.com</a> и <a href="https://studio.zvuk.com" target="_blank">studio.zvuk.com</a> соответственно.',
+        // Cover mode
+        titleCover: 'БЫСТРО ИЗМЕНИТЬ РАЗМЕР ОБЛОЖКИ НА НУЖНЫЙ ДЛЯ ЗАГРУЗКИ НА ПЛОЩАДКИ',
+        subtitleCover: 'загрузи свою обложку – скачай готовую обложку в нужном размере без искажений',
+        warningCover: 'ВНИМАНИЕ: На обложке не должно быть надписей, кроме названия релиза и/или псевдоним(-ов) артиста. Названия на обложке должны на 100% совпадать с названием релиза/псевдонимом, до каждой буквы, запятой и пробела. Нельзя использовать логотипы и изображения известных людей/брендов. Разрешаются обложки без надписей вообще.',
+        infoCover: 'Учтите, что обложки, нарушающие требования, могут быть отклонены модерацией при отгрузке на площадки.',
         modeCards: '🎴 Карточки',
         modeCover: '💿 Обложка',
         uploadLabel: 'Загрузи своё фото',
@@ -24,10 +30,16 @@ const translations = {
         loadError: 'Не удалось загрузить изображение'
     },
     en: {
-        title: 'QUICK PHOTO CREATION IN THE RIGHT SIZES FOR ARTIST CARDS ON ALL PLATFORMS',
-        subtitle: 'upload your photo – adjust – download ready sizes for design',
-        warning: 'WARNING: Art and collages are not allowed – only real photos of the band or artist. Photos must not contain smoking, alcohol, any text or brand images (including on clothing).',
-        info: 'To set up your artist card on Apple Music, Spotify and Zvuk, you need to register in their apps: <a href="https://artists.apple.com" target="_blank">artists.apple.com</a>, <a href="https://artists.spotify.com" target="_blank">artists.spotify.com</a> and <a href="https://studio.zvuk.com" target="_blank">studio.zvuk.com</a> respectively.',
+        // Cards mode
+        titleCards: 'QUICK PHOTO CREATION IN THE RIGHT SIZES FOR ARTIST CARDS ON ALL PLATFORMS',
+        subtitleCards: 'upload your photo – adjust – download ready sizes for design',
+        warningCards: 'WARNING: Art and collages are not allowed – only real photos of the band or artist. Photos must not contain smoking, alcohol, any text or brand images (including on clothing).',
+        infoCards: 'To set up your artist card on Apple Music, Spotify and Zvuk, you need to register in their apps: <a href="https://artists.apple.com" target="_blank">artists.apple.com</a>, <a href="https://artists.spotify.com" target="_blank">artists.spotify.com</a> and <a href="https://studio.zvuk.com" target="_blank">studio.zvuk.com</a> respectively.',
+        // Cover mode
+        titleCover: 'QUICKLY RESIZE YOUR COVER TO THE RIGHT SIZE FOR UPLOADING TO PLATFORMS',
+        subtitleCover: 'upload your cover – download ready cover in the right size without distortion',
+        warningCover: 'WARNING: The cover must not contain any text except the release title and/or artist name(s). Names on the cover must 100% match the release title/artist name, down to every letter, comma and space. Logos and images of famous people/brands are not allowed. Covers without any text are permitted.',
+        infoCover: 'Please note that covers violating the requirements may be rejected during moderation when uploading to platforms.',
         modeCards: '🎴 Cards',
         modeCover: '💿 Cover',
         uploadLabel: 'Upload your photo',
@@ -59,6 +71,12 @@ createApp({
         
         // Translations
         const t = computed(() => translations[lang.value]);
+        
+        // Dynamic texts based on mode
+        const currentTitle = computed(() => mode.value === 'cover' ? t.value.titleCover : t.value.titleCards);
+        const currentSubtitle = computed(() => mode.value === 'cover' ? t.value.subtitleCover : t.value.subtitleCards);
+        const currentWarning = computed(() => mode.value === 'cover' ? t.value.warningCover : t.value.warningCards);
+        const currentInfo = computed(() => mode.value === 'cover' ? t.value.infoCover : t.value.infoCards);
         
         // Image state
         const imageLoaded = ref(false);
@@ -408,6 +426,10 @@ createApp({
             mode,
             lang,
             t,
+            currentTitle,
+            currentSubtitle,
+            currentWarning,
+            currentInfo,
             toggleTheme,
             toggleLang,
             setMode,

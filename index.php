@@ -36,8 +36,8 @@
                     
                     <!-- Title -->
                     <div class="title-section">
-                        <h1>{{ t.title }}</h1>
-                        <p class="subtitle">{{ t.subtitle }}</p>
+                        <h1>{{ currentTitle }}</h1>
+                        <p class="subtitle">{{ currentSubtitle }}</p>
                     </div>
 
                     <!-- Mode Tabs -->
@@ -150,12 +150,12 @@
 
                     <!-- Warning -->
                     <div class="warning-card">
-                        <p class="warning-text">{{ t.warning }}</p>
+                        <p class="warning-text">{{ currentWarning }}</p>
                     </div>
 
                     <!-- Info -->
                     <div class="info-card">
-                        <p class="info-text" v-html="t.info"></p>
+                        <p class="info-text" v-html="currentInfo"></p>
                     </div>
 
                     <!-- Error -->
