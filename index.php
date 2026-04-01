@@ -150,23 +150,11 @@
                             </div>
                         </div>
 
-                        <!-- Download Buttons -->
-                        <div v-if="mode === 'cards'" class="download-buttons">
-                            <button 
-                                v-for="(format, key) in cardFormats"
-                                :key="key"
-                                @click="downloadFormat(key)" 
-                                :disabled="isGenerating"
-                                class="download-btn"
-                            >
-                                📥 {{ format.label }}
-                            </button>
-                        </div>
-                        <div v-else>
-                            <button @click="downloadFormat('cover')" :disabled="isGenerating" class="calc-btn">
-                                📥 {{ t.downloadCover }}
-                            </button>
-                        </div>
+                        <!-- Download Button -->
+                        <button @click="downloadAll" :disabled="isGenerating" class="calc-btn">
+                            <span v-if="isGenerating">⏳ {{ t.generating }}</span>
+                            <span v-else>📥 {{ mode === 'cards' ? t.downloadAll : t.downloadCover }}</span>
+                        </button>
 
                     </div>
 

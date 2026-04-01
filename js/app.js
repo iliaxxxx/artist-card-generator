@@ -17,6 +17,7 @@ const translations = {
         changePhoto: 'Другое фото',
         generating: 'Создаём...',
         downloadCover: 'Скачать обложку 1500×1500',
+        downloadAll: 'Скачать все форматы (3 файла)',
         lightTheme: 'Светлая тема',
         darkTheme: 'Тёмная тема',
         fileTooLarge: 'Файл слишком большой (макс. 10MB)',
@@ -37,6 +38,7 @@ const translations = {
         changePhoto: 'Change photo',
         generating: 'Creating...',
         downloadCover: 'Download cover 1500×1500',
+        downloadAll: 'Download all formats (3 files)',
         lightTheme: 'Light theme',
         darkTheme: 'Dark theme',
         fileTooLarge: 'File too large (max 10MB)',
@@ -331,11 +333,7 @@ createApp({
         };
         
         const downloadFormat = (formatKey) => {
-            if (!image.value) return;
-            
-            isGenerating.value = true;
-            
-            try {
+            return new Promise((resolve) => {
                 const exportCanvas = generateCanvas(formatKey);
                 let format;
                 if (formatKey === 'cover') {
@@ -350,11 +348,30 @@ createApp({
                     link.href = URL.createObjectURL(blob);
                     link.click();
                     URL.revokeObjectURL(link.href);
-                    isGenerating.value = false;
+                    resolve();
                 }, 'image/png');
+            });
+        };
+        
+        const downloadAll = async () => {
+            if (!image.value) return;
+            
+            isGenerating.value = true;
+            
+            try {
+                if (mode.value === 'cover') {
+                    await downloadFormat('cover');
+                } else {
+                    // Download all 3 card formats with delay
+                    for (const key of Object.keys(cardFormats)) {
+                        await downloadFormat(key);
+                        await new Promise(r => setTimeout(r, 300));
+                    }
+                }
             } catch (err) {
                 console.error('Download error:', err);
                 error.value = lang.value === 'ru' ? 'Ошибка скачивания' : 'Download error';
+            } finally {
                 isGenerating.value = false;
             }
         };
@@ -404,7 +421,7 @@ createApp({
             onZoomChange,
             resetPosition,
             clearImage,
-            downloadFormat
+            downloadAll
         };
     }
 }).mount('#app');
