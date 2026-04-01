@@ -31,6 +31,16 @@ $file = $_FILES['image'];
 $bgColor = $_POST['bg_color'] ?? '#808080';
 $mode = $_POST['mode'] ?? 'cards';
 
+// Валидация цвета фона
+if (!preg_match('/^#[0-9a-fA-F]{6}$/', $bgColor)) {
+    $bgColor = '#808080';
+}
+
+// Валидация режима
+if (!in_array($mode, ['cards', 'covers'])) {
+    $mode = 'cards';
+}
+
 // Проверка типа файла
 $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
